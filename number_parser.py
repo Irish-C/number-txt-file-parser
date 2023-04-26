@@ -31,6 +31,16 @@ import PySimpleGUI as sg
 
         # Close the output window
 
+            # If the user clicks the "Save File" button, write the output to a file
+            
+                # Open a new file for writing
+                
+                    # Write the even integers to the file
+
+                    # Write the odd integers to the file
+
+                # Display a message to the user that the file has been saved
+
 
 
 # CODE FOR THE MAIN OBJECTIVES
