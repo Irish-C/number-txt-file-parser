@@ -2,6 +2,29 @@
 import PySimpleGUI as sg
 import os
 import pyperclip
+import time
+
+# Define loading function bar
+def show_loading_bar():
+    loading_layout = [    
+        [sg.Text('Loading...', font=('Helvetica', 14))],
+        [sg.ProgressBar(10, orientation='h', size=(20, 20), key='progressbar')],
+        [sg.Button('Cancel')]
+    ]
+        
+    loading = sg.Window('Loading...', loading_layout)
+    loading.finalize()
+
+    # Update the progress bar until the loop is interrupted by a cancel event or the progress bar is complete
+    for i in range(10):
+        event, values = loading.read(timeout=10)
+        if event == 'Cancel' or event == sg.WIN_CLOSED:
+            break
+        loading['progressbar'].UpdateBar(i+1)
+        time.sleep(0.1)
+    
+    # Close the show_loading_bar function
+    loading.close()
 
 # Define the PySimpleGUI layout for initiating a file
 layout = [
@@ -25,6 +48,10 @@ while True:
     
     # If the user clicks the "Process File" button, execute the file processing
     if event == "Process File":
+
+        #Show loading bar
+        show_loading_bar()
+
         # Open the selected file in read mode
         with open(values[0], "r") as num_file:
             content = num_file.read()
@@ -108,7 +135,7 @@ while True:
 
                 # Define the PySimpleGUI layout for file location
                 visit_layout = [
-                    [sg.Text(("File saved successfully!")],
+                    [sg.Text("File saved successfully!")],
                     [sg.Text("The files are located in the following directory:"), sg.Button('Copy Even'), sg.Button('Copy Odd')],
                     [sg.Text("", size=(80,1), key='filepath')],
                     [sg.Button("Visit Save Files", key="visit"), sg.Button("Exit")]
@@ -122,17 +149,18 @@ while True:
                 while True:
                     visit_event, visit_values = visit_window.read()
 
-                    # If the user selects "" button, 
+                    # If the user selects "exit" button or exit window 
                     if visit_event == sg.WIN_CLOSED or visit_event == "Exit":
                         break
-
+                    
+                    # If the user selects 'Copy Even' button to copy its file path
                     elif visit_event == 'Copy Even':
                         path = os.path.dirname(os.path.abspath(__file__))
                         filepath = os.path.join(path, "even.txt")
                         pyperclip.copy(filepath)
                         sg.Popup('File path copied to clipboard!')
                         continue
-
+                    # If the user selects 'Copy Odd' button to copy its file path
                     elif visit_event == 'Copy Odd':
                         path = os.path.dirname(os.path.abspath(__file__))
                         filepath = os.path.join(path, "odd.txt")
